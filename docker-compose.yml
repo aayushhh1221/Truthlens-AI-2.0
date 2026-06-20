@@ -1,0 +1,28 @@
+# ─────────────────────────────────────────────
+# TruthLens AI 2.0 — Docker Compose
+# Usage: docker compose up --build
+# ─────────────────────────────────────────────
+version: "3.9"
+
+services:
+  truthlens:
+    build: .
+    container_name: truthlens-ai
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_PATH=/app/data/truthlens.db
+    volumes:
+      - truthlens_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  truthlens_data:
+    driver: local
